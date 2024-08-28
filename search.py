@@ -8,6 +8,7 @@ def extract_purchase_details(body, regex):
     if match:
         # Extract the details using the named groups (remove whitespace with .strip())
         purchase_details = {
+            'msg_id' : msg_id,
             'date': match.group('date'),
             'amount': match.group('amount'),
             'store': match.group('store').strip(),
@@ -42,7 +43,7 @@ def search_messages(service, query, regex):
             body = urlsafe_b64decode(msg_data['payload']['body']['data']).decode('utf-8')
 
         # Store the extracted details
-        body_details = extract_purchase_details(body, regex)
+        body_details = extract_purchase_details(body, regex, msg_id)
         if body_details:
             print(body_details)
         else:

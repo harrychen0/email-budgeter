@@ -1,7 +1,8 @@
 import re
 # for encoding/decoding messages in base64
 from base64 import urlsafe_b64decode
-def extract_purchase_details(body, regex):
+from collections import deque
+def extract_purchase_details(body, regex, msg_id):
     # Search the body with the defined pattern
     match = re.search(re.compile(regex), body)
 
@@ -27,7 +28,7 @@ def search_messages(service, query, regex):
         result = service.users().messages().list(userId='me', q=query, pageToken=page_token).execute()
         if 'messages' in result:
             messages.extend(result['messages'])
-    message_details = []
+    message_details = deque()
 
     for msg in messages:
         msg_id = msg['id']
@@ -48,6 +49,6 @@ def search_messages(service, query, regex):
             print(body_details)
         else:
             print("Could not extract purchase details. ", body[:50])
-        message_details.append(body_details)
+        message_details.appendleft(body_details)
 
     return message_details
